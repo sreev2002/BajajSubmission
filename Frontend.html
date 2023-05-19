@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    
+    h2 {
+      margin-bottom: 10px;
+    }
+    
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    th {
+      background-color: #007bff;
+      color: white;
+      border-top: 1px solid #ddd;
+    }
+    
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+  <h2>Employees</h2>
+  <table id="employees-table">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Designation</th>
+      <th>Skills</th>
+    </tr>
+  </table>
+
+  <h2>Projects</h2>
+  <table id="projects-table">
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Team</th>
+    </tr>
+  </table>
+
+  <h2>Tasks</h2>
+  <table id="tasks-table">
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Status</th>
+    </tr>
+  </table>
+
+  <script>
+    // Fetch the JSON data
+    fetch('https://raw.githubusercontent.com/dixitsoham7/dixitsoham7.github.io/main/index.json')
+      .then(response => response.json())
+      .then(data => {
+        // Display Employees
+        const employeesTable = document.getElementById('employees-table');
+        data.employees.forEach(employee => {
+          const skills = employee.skills.join(', ');
+          const row = `<tr>
+                        <td>${employee.id}</td>
+                        <td>${employee.name || ''}</td>
+                        <td>${employee.designation || ''}</td>
+                        <td>${skills}</td>
+                      </tr>`;
+          employeesTable.innerHTML += row;
+        });
+
+        // Display Projects
+        const projectsTable = document.getElementById('projects-table');
+        data.employees.forEach(employee => {
+          if (employee.projects) {
+            employee.projects.forEach(project => {
+              const team = project.team.map(member => `${member.name} (${member.role})`).join(', ');
+              const row = `<tr>
+                            <td>${project.name}</td>
+                            <td>${project.description || ''}</td>
+                            <td>${team}</td>
+                          </tr>`;
+              projectsTable.innerHTML += row;
+            });
+          }
+        });
+
+        // Display Tasks
+        const tasksTable = document.getElementById('tasks-table');
+        data.employees.forEach(employee => {
+          if (employee.projects) {
+            employee.projects.forEach(project => {
+              if (project.tasks) {
+                project.tasks.forEach(task => {
+                  const row = `<tr>
+                                <td>${task.id}</td>
+                                <td>${task.name || ''}</td>
+                                <td>${task.status || ''}</td>
+                              </tr>`;
+                  tasksTable.innerHTML += row;
+                });
+              }
+            });
+          }
+        });
+      });
+  </script>
+</body>
+</html>
